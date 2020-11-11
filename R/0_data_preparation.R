@@ -51,17 +51,24 @@ setnames(d, c('variable', 'value'), c('picture_type', 'photo_id'))
 # exclude NA
 d = d[!is.na(photo_id)]
 
+# check for duplicates
+d[, y_c_p := paste(year_, cam_id, photo_id, sep = '_')]
+
+d[, duplicates := duplicated(y_c_p)]
+d[, any_duplicates := any(duplicates), by = y_c_p]
+
+ds = d[any_duplicates == TRUE]
+setorder(ds, y_c_p, ID)
+ds # need to be checked manually 
+
 # merge with file name
 d = merge(d, df, by = c('year_', 'cam_id', 'photo_id'), all.x = TRUE)
 
 # any missing?
 d[is.na(file_name)]
 
-
-
-
 # new name (year_ID_photo_ID)
-d[, new_file_name := paste0('ID', ID, '_', as.Date(caught_time), '_type_', picture_type, '_c', cam_id,'_p', photo_id, '.JPG')]
+d[, new_file_name := paste0(picture_type, '/ID', ID, '_', as.Date(caught_time), '_type_', picture_type, '_c', cam_id,'_p', photo_id, '.JPG')]
 
 # path connections
 d[, raw_path := paste0(raw_path, file_name)] # raw data path

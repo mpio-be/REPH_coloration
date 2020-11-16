@@ -85,6 +85,7 @@ foreach(i = 1:nrow(d)) %dopar%
 
 
 # save table with raw and new names
+d[, c('duplicates','any_duplicates') := NULL]
 saveRDS(d, './DATA/raw_data_renamed.rds')
 
 

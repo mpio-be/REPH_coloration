@@ -1,58 +1,52 @@
-#========================================================================================================================
+#=======================================================================================================
 # Test colorZapper with REPH data
-#========================================================================================================================
+#=========================================================================================================
+
+# NOTES:
+    # this script should run in plain R not in Rstudio
+    # the working directory should be set with setwd("your_local_path/REPH_coloration")  
+    # ⚠ CZdefine can be interrupted and resumed any time. The data is saved after each image. 
 
 # Packages
-sapply( c('data.table', 'magrittr', 'colorZapper'),
-        require, character.only = TRUE)
-
-dir = './DATA/example_files/head_t/'
+    sapply( c('colorZapper', 'here'), require, character.only = TRUE)
 
 
-# open/create a colorZapper file
-cz_file = tempfile(fileext = '.sqlite')
-CZopen(path = cz_file)
-# associate files with the opened file
-CZaddFiles(dir)
+### STEP 1
 
-# define 1 point per image
-CZdefine(points = 1)
+# Setup: only run once!
+    cz_file = '~/Desktop/REPH.sqlite' 
+    CZopen(path = cz_file) 
 
-# check status
-CZshowStatus()
+### STEP 2
 
+# Process front
+    CZaddFiles('DATA/example_files/head_t') # run once  
 
-
-
-#------------------------------------------------------------------------------------------------------------------------
-# Working example from the package
-#------------------------------------------------------------------------------------------------------------------------
-
-require(colorZapper)
-# path to image directory
-dir = system.file(package = "colorZapper", "sample")
-# open/create a colorZapper file
-cz_file = tempfile(fileext = '.sqlite')
-CZopen(path = cz_file)
-# associate files with the opened file
-CZaddFiles(dir)
+    # interactively define ROI-s: 
+    # for standard_white and standard_grey one triangle is enough
+    CZdefine(polygons = 1, marks = c('head_top','bill', 'standard_white', 'standard_grey') )
 
 
-# define 1 point per image
-CZdefine(points = 1)
+# Process head_l
+    CZaddFiles('DATA/example_files/head_l') 
+    CZdefine(polygons = 1, marks = c('head_left', 'standard_white', 'standard_grey') )
 
-# check status
-CZshowStatus()
+### STEP 3
+    CZextractROI()
 
-# over-write points defined for Falco_peregrinus (id = 2)
-CZdefine(points = 1, what  = 2)
-CZshowStatus()
-# define points using marks
-# 2 points per mark = 4 points per image
-# 'what' is set so only particular images are going to be loaded
-CZdefine(points = 1, marks = c("wing", "tail") , what = 4)
-CZshowStatus()
+    d = CZdata(what = 'ROI')
 
-#define polygons: 1 polygon per mark
-# see help(locator) for info on how to draw on an R graphic. 
-CZdefine(polygons = 1, marks = c("wing", "tail"), what = 3 )
+    CZcheck()
+
+
+
+
+
+
+
+
+
+
+
+
+

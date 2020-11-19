@@ -32,11 +32,14 @@
     CZdefine(polygons = 1, marks = c('head_left', 'standard_white', 'standard_grey') )
 
 ### STEP 3
+    # extract color from the ROI-s    
     CZextractROI()
 
+    # fetch the extracted data from the SQLITE file. 
     d = CZdata(what = 'ROI')
 
-    CZcheck()
+    # opens a pdf with photos and marks for review. 
+    CZcheck()   
 
 
 

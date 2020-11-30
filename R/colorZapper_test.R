@@ -1,19 +1,47 @@
-#========================================================================================================================
+#=======================================================================================================
 # Test colorZapper with REPH data
-#========================================================================================================================
+#=========================================================================================================
+
+# NOTES:
+    # this script should run in plain R not in Rstudio
+    # the working directory should be set with setwd("your_local_path/REPH_coloration")  
+    # ⚠ CZdefine can be interrupted and resumed any time. The data is saved after each image. 
 
 # Packages
-sapply( c('data.table', 'magrittr', 'colorZapper'),
-        require, character.only = TRUE)
-
-dir = './DATA/example_files/head_t/'
+    sapply( c('colorZapper', 'here'), require, character.only = TRUE)
 
 
-# open/create a colorZapper file
-cz_file = tempfile(fileext = '.sqlite')
-CZopen(path = cz_file)
-# associate files with the opened file
-CZaddFiles(dir)
+### STEP 1
+
+# Setup: only run once!
+    cz_file = '~/Desktop/REPH.sqlite' 
+    CZopen(path = cz_file) 
+
+### STEP 2
+
+# Process front
+    CZaddFiles('DATA/example_files/head_t') # run once  
+
+    # interactively define ROI-s: 
+    # for standard_white and standard_grey one triangle is enough
+    CZdefine(polygons = 1, marks = c('head_top','bill', 'standard_white', 'standard_grey') )
+
+
+# Process head_l
+    CZaddFiles('DATA/example_files/head_l') 
+    CZdefine(polygons = 1, marks = c('head_left', 'standard_white', 'standard_grey') )
+
+### STEP 3
+    # extract color from the ROI-s    
+    CZextractROI()
+
+    # fetch the extracted data from the SQLITE file. 
+    d = CZdata(what = 'ROI')
+
+    # opens a pdf with photos and marks for review. 
+    CZcheck()   
+
+
 
 #define ROIs  
 CZdefine(polygons = 1, marks = c('bill', 'crown', 'standard_grey', 'standard_white'))
@@ -24,8 +52,7 @@ CZextractROI()
 # fetch the extracted data from the SQLITE file 
 fetched_data = CZdata(what = 'ROI')  
 
-# check status
-CZshowStatus()
+
 
 #now, for each ID, each RGB value for mark=='bill' & == 'crown' needs to be converted using the RGB value with mark=='standard_grey' for that same ID  
 
@@ -56,35 +83,10 @@ summary(bill)
 summary(crown)
 
 
-#------------------------------------------------------------------------------------------------------------------------
-# Working example from the package
-#------------------------------------------------------------------------------------------------------------------------
-
-require(colorZapper)
-# path to image directory
-dir = system.file(package = "colorZapper", "sample")
-# open/create a colorZapper file
-cz_file = tempfile(fileext = '.sqlite')
-CZopen(path = cz_file)
-# associate files with the opened file
-CZaddFiles(dir)
 
 
-# define 1 point per image
-CZdefine(points = 1)
-
-# check status
-CZshowStatus()
-
-# over-write points defined for Falco_peregrinus (id = 2)
-CZdefine(points = 1, what  = 2)
-CZshowStatus()
-# define points using marks
-# 2 points per mark = 4 points per image
-# 'what' is set so only particular images are going to be loaded
-CZdefine(points = 1, marks = c("wing", "tail") , what = 4)
-CZshowStatus()
 
 #define polygons: 1 polygon per mark
 # see help(locator) for info on how to draw on an R graphic. 
 CZdefine(polygons = 1, marks = c("wing", "tail"), what = 3 )
+

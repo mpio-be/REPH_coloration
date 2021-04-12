@@ -18,5 +18,10 @@ CZopen(path = cz_file)
 # add pictures from the folder (e.g., front)
 CZaddFiles(path_pictures)
 
+# register cores
+require(doFuture)
+registerDoFuture()
+plan(multiprocess)
+
 # extract the RGB in the ROIs
 CZextractROI(parallel = FALSE) # parallel FALSE/TRUE 

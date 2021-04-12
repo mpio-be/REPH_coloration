@@ -3,7 +3,7 @@
 #========================================================================================================================
 
 # Packages
-sapply( c('data.table', 'magrittr', 'sdb', 'ggplot2', 'colorZapper', 'here'),
+sapply( c('data.table', 'magrittr', 'sdb', 'ggplot2', 'colorZapper', 'here', 'doFuture'),
         require, character.only = TRUE)
 
 # set working directory
@@ -19,9 +19,8 @@ CZopen(path = cz_file)
 CZaddFiles(path_pictures)
 
 # register cores
-require(doFuture)
-registerDoFuture()
-plan(multiprocess)
+# registerDoFuture()
+# plan(multiprocess)
 
 # extract the RGB in the ROIs
 CZextractROI(parallel = FALSE) # parallel FALSE/TRUE 

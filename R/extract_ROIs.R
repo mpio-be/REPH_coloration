@@ -7,7 +7,7 @@ sapply( c('data.table', 'magrittr', 'sdb', 'ggplot2', 'colorZapper', 'here', 'do
         require, character.only = TRUE)
 
 # set working directory
-path_pictures = '//ds/raw_data_kemp/FIELD/Barrow/REPH_BODY_PICTURES/DATA_RENAMED_lowres/front/'
+path_pictures = '//ds/raw_data_kemp/FIELD/Barrow/REPH_BODY_PICTURES/DATA_RENAMED_lowres/front'
 
 # set the directory containing the existing SQLITE file (e.g., front)
 cz_file = './DATA/REPH_front.sqlite'

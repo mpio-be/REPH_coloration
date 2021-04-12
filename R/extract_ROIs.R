@@ -34,61 +34,22 @@ foreach(i = dbnames) %do% {
     
 }
 
+# check tables
+con = dbConnect(drv = RSQLite::SQLite(), dbname = paste0('./DATA/sqlite_files/REPH_front.sqlite'))
+df = dbGetQuery(con, statement = "SELECT * FROM 'files'") %>% data.table
+df[1, ]
+nrow(df)
+
 #------------------------------------------------------------------------------------------------------------------------
 # Extract ROIs
 #------------------------------------------------------------------------------------------------------------------------
 
-
-
 # set the directory containing the existing SQLITE file (e.g., front)
 cz_file = './DATA/sqlite_files/REPH_front.sqlite'
-
-
-
-
 
 # open the SQLITE file
 CZopen(path = cz_file)  
 
-# add pictures from the folder (e.g., front)
-CZaddFiles(path_pictures)
-
 # extract the RGB in the ROIs
-CZextractROI(parallel = FALSE) # parallel FALSE/TRUE 
-
-
-con <- dbConnect(drv=RSQLite::SQLite(), dbname = './DATA/sqlite_files/REPH_front.sqlite')
-
-
-
-## list all tables
-tables <- dbListTables(con)
-
-## exclude sqlite_sequence (contains table information)
-tables <- tables[tables != "sqlite_sequence"]
-
-lDataFrames <- vector("list", length=length(tables))
-
-## create a data.frame for each table
-for (i in seq(along=tables)) {
-  lDataFrames[[i]] <- dbGetQuery(conn=con, statement=paste("SELECT * FROM '", tables[[i]], "'", sep=""))
-}
-
-
-
-
-
-
-
-con <- dbConnect(RSQLite::SQLite(), ":memory:")
-con
-
-con <- dbConnect(RSQLite::SQLite(), './DATA/sqlite_files/REPH_front.sqlite')
-con
-
-
-
-x = dbReadTable(con, "SELECT * FROM 'files'")
-
-dbDisconnect(con)
+d = CZextractROI(parallel = TRUE) # parallel FALSE/TRUE 
 

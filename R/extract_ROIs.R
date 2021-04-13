@@ -44,12 +44,15 @@ nrow(df)
 # Extract ROIs
 #------------------------------------------------------------------------------------------------------------------------
 
-# set the directory containing the existing SQLITE file (e.g., front)
+# set the directory containing the existing SQLITE file
 cz_file = './DATA/sqlite_files/REPH_front.sqlite'
+cz_file = './DATA/sqlite_files/REPH_head_l.sqlite'
+cz_file = './DATA/sqlite_files/REPH_head_t.sqlite'
+cz_file = './DATA/sqlite_files/REPH_wing.sqlite'
 
 # open the SQLITE file
 CZopen(path = cz_file)  
 
 # extract the RGB in the ROIs
-d = CZextractROI(parallel = TRUE) # parallel FALSE/TRUE 
+d = CZextractROI(parallel = FALSE) # parallel FALSE/TRUE 
 

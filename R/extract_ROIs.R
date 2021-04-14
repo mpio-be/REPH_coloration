@@ -37,6 +37,7 @@ foreach(i = dbnames) %do% {
 # check tables
 con = dbConnect(drv = RSQLite::SQLite(), dbname = paste0('./DATA/sqlite_files/REPH_front.sqlite'))
 df = dbGetQuery(con, statement = "SELECT * FROM 'files'") %>% data.table
+dbDisconnect(con)
 df[1, ]
 nrow(df)
 
@@ -54,5 +55,5 @@ cz_file = './DATA/sqlite_files/REPH_wing.sqlite'
 CZopen(path = cz_file)  
 
 # extract the RGB in the ROIs
-d = CZextractROI(parallel = FALSE) # parallel FALSE/TRUE 
+CZextractROI(parallel = TRUE) # parallel FALSE/TRUE 
 

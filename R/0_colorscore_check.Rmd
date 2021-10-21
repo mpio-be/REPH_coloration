@@ -1,0 +1,80 @@
+
+---
+title: "REPH color head t"
+author: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r PACKAGES_SETTINGS}
+  require(imager)
+  require(pander)
+  require(colorZapper)
+  require(data.table)
+  require(stringr)
+  require(sf)
+
+  CZopen(path = here::here('DATA/sqlite_files/REPH_head_t.sqlite'))
+
+  filePath = "/ds/raw_data_kemp/FIELD/Barrow/REPH_BODY_PICTURES/DATA_RENAMED_ROTATED_lowres/head_t"
+
+
+```
+
+```{r DATA, warning=FALSE}
+# DATA
+
+  photos = list.files(filePath, full.names = TRUE)
+
+  # Polygons
+  roi = RSQLite::dbGetQuery(getOption("cz.con"), 
+    "SELECT r.id, wkt, mark, path as nam from ROI r JOIN files f on f.id = r.id") |> setDT()
+  roi[, nam := basename(nam)]
+  roi[, scinam  := str_split(nam, '-', simplify = TRUE)[1], by = 1:nrow(roi)]
+  roi[, sex  := str_extract(nam, 'female|male') ]
+  roi = st_as_sf(roi, wkt = 'wkt')
+
+
+
+```
+
+
+```{r plot, results='asis', out.width = "50%"}
+  
+
+  for(i in 1:length(photos)) {
+
+    pathi = photos[i]
+    # when run manually you can select the path for a given ID
+    # pathi = photos[str_detect(photos, "270170327")]
+
+    nami  = basename(pathi)
+  
+    if(file.exists(pathi)) {  
+   
+    imgi = load.image(pathi) |>
+      flatten.alpha()        |>
+      as.raster()
+ 
+    roir = dplyr::filter( roi, nam == nami)   |> st_geometry ()
+  
+    panderOptions('knitr.auto.asis', FALSE)
+    
+    cat("<hr>\n")
+ 
+    plot(imgi); title(main = nami)
+    plot(roir, col = NA, border = "red", lwd = 2, add = TRUE)
+   
+    } else 
+      paste("Missing", nami)
+  
+
+  }
+
+
+
+
+```

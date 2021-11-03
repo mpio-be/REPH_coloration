@@ -17,4 +17,4 @@
 # GET DATA
   o = X[, {CZopen(dbs);CZdata(what= 'ROI')}, by =parts ]
 
-  fwrite(o, here('DATA/RGB.csv')   )
+  fwrite(o, here('//ds/raw_data_kemp/FIELD/Barrow/REPH_BODY_PICTURES/DATA/RGB.csv')   )

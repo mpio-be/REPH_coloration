@@ -1,7 +1,7 @@
 
 # PACKAGES 
   sapply( c('data.table', 'magrittr', 'stringr', 'here', 'ggplot2', 
-          'foreach', 'colorspace'),
+          'foreach', 'colorspace', 'dplyr'),
           require, character.only = TRUE)
 
 # COLLECT raw DATA 
@@ -16,9 +16,9 @@
   d$uniqueid = paste(d$parts, d$path, d$id, sep="_")
   
   #split the dataset in roi, grey and white
-  gr<-df[mark=="standard_grey"]
-  wh<-df[mark=="standard_white"]
-  roi<-df[mark!="standard_grey" & mark!="standard_white"]
+  gr<-d[mark=="standard_grey"]
+  wh<-d[mark=="standard_white"]
+  roi<-d[mark!="standard_grey" & mark!="standard_white"]
   
   #calibrate RGBs in standard_grey
   gr <- gr %>% 
@@ -50,10 +50,12 @@
   summary(d)
   
   # check how many values above 255
-  d[R > 255, .N]
+  d[R > 255, .N] # 5297887
   d[G > 255, .N]
   d[B > 255, .N]
-  # nothing to exclude
+ 
+  # exclude above 255
+  d = d[R <= 255]
   
   # make sure it's a table
   d = as.data.table(d)

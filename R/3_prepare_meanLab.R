@@ -10,24 +10,11 @@
 # PERFORM calibration
 
   # some values have R+G+B = 0 making calibration unfeasible (RGB/0=impossible)
-  d = subset(d, d$R!=0 | d$G!=0 | d$B!=0)
-  
-  # create unique ID to associate body part+grey+white
-  d$uniqueid = paste(d$parts, d$path, d$id, sep="_")
+  d = d[R!=0 | G!=0 | B!=0]
   
   #split the dataset in roi, grey and white
-  gr<-d[mark=="standard_grey"]
   wh<-d[mark=="standard_white"]
   roi<-d[mark!="standard_grey" & mark!="standard_white"]
-  
-  #calibrate RGBs in standard_grey
-  gr <- gr %>% 
-    group_by(path) %>%
-    mutate(R=mean(R/((R+G+B)/3)), 
-           G=mean(G/((R+G+B)/3)), 
-           B=mean(B/((R+G+B)/3))) %>%
-    filter (! duplicated(path)) %>% #keep one row for each pic
-    select(-"mark")
   
   #calibrate RGBs in standard_white and merge the two datasets
   cal_patch <- wh %>% 
@@ -35,14 +22,13 @@
     mutate(R=mean(R/((R+G+B)/3)), 
            G=mean(G/((R+G+B)/3)), 
            B=mean(B/((R+G+B)/3))) %>%
-    filter (! duplicated(path)) %>%
-    select(-"mark") %>%
-    left_join(gr, by = c("path", "parts", "id"), suffix = c("_white", "_grey"))
+    filter (! duplicated(path)) %>% #keep one row for each picture
+    select(-"mark") #keep relevant columns only 
   
   #perform calibration [(RGBroi/RGBgrey)/RGBwhite]
   d <- roi %>%
     left_join(cal_patch, by = c("path", "parts", "id")) %>%
-    mutate(R=(R/R_grey)/R_white, G=(G/G_grey)/G_white, B=(B/B_grey)/ B_white) %>%
+    mutate(R=(R/R_white), G=(G/G_white), B=(B/ B_white)) %>%
     select(c("parts", "mark", "id", "path", "R", "G", "B")) #keep relevant columns only
   
   #check d

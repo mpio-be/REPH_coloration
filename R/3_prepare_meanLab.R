@@ -27,7 +27,7 @@
   
   #perform calibration [(RGBroi/RGBgrey)/RGBwhite]
   d <- roi %>%
-    left_join(cal_patch, by = c("path", "parts", "id")) %>%
+    left_join(cal_patch, by = c("path", "parts", "id"), suffix = c("", "_white")) %>%
     mutate(R=(R/R_white), G=(G/G_white), B=(B/ B_white)) %>%
     select(c("parts", "mark", "id", "path", "R", "G", "B")) #keep relevant columns only
   

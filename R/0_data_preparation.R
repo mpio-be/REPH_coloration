@@ -89,3 +89,29 @@ d[, c('duplicates','any_duplicates') := NULL]
 saveRDS(d, './DATA/raw_data_renamed.rds')
 
 
+
+
+# check if all files exist
+
+# list all created files
+l_front  = data.table(type = 'front', file = list.files(paste0(new_path, '/front'), pattern = '.JPG'))
+l_head_l = data.table(type = 'head_l', file = list.files(paste0(new_path, '/head_l'), pattern = '.JPG')) 
+l_head_t = data.table(type = 'head_t', file = list.files(paste0(new_path, '/head_t'), pattern = '.JPG')) 
+l_tail   = data.table(type = 'tail', file = list.files(paste0(new_path, '/tail'), pattern = '.JPG')) 
+l_wing_l = data.table(type = 'wing_l', file = list.files(paste0(new_path, '/wing_l'), pattern = '.JPG')) 
+
+l_all = rbindlist(list(l_front, l_head_l, l_head_t, l_tail, l_wing_l))
+
+l_all[, file_name := paste0(type, '/', file)]
+
+existing = l_all$file_name
+sup_created = d$new_file_name
+
+# same number
+length(existing)
+length(sup_created)
+
+# identical?
+identical(sup_created, existing)  
+setdiff(sup_created, existing)
+
